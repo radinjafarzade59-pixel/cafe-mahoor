@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کافه ماهور</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Tahoma;
+  background:#120f0d;
+  color:#f5f1ea;
+}
+
+/* HEADER */
+header{
+  text-align:center;
+  padding:25px;
+  font-size:32px;
+  background:#2b211b;
+  border-bottom:2px solid #c89b5a;
+  letter-spacing:1px;
+}
+
+/* MENU GRID */
+.menu{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+
+/* CATEGORY */
+.cat-title{
+  margin:35px 0 10px;
+  font-size:20px;
+  color:#c89b5a;
+  border-right:4px solid #c89b5a;
+  padding-right:10px;
+  animation: fadeIn 0.5s ease;
+}
+
+/* ITEMS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+}
+
+.card{
+  background:#1f1915;
+  border:1px solid #2f241e;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:0.25s;
+  animation: pop 0.3s ease;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  border-color:#c89b5a;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  color:#fff;
+}
+
+/* DETAIL PAGE */
+.detail{
+  display:none;
+  max-width:850px;
+  margin:auto;
+  padding:25px;
+  line-height:2;
+  animation: fadeIn 0.4s ease;
+}
+
+.back{
+  margin-top:20px;
+  display:inline-block;
+  padding:10px 15px;
+  background:#c89b5a;
+  color:#000;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes pop{
+  from{transform:scale(0.95); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<header>کافه ماهور</header>
+
+<div class="menu" id="menu"></div>
+
+<div class="detail" id="detailBox">
+  <h2 id="title"></h2>
+  <p id="desc"></p>
+  <div class="back" onclick="goBack()">بازگشت</div>
+</div>
+
+<script>
+
+const data = {
+
+espresso:{
+cat:"قهوه‌های کلاسیک",
+title:"اسپرسو",
+desc:"قهوه‌ای تلخ، غلیظ و پایه اصلی بسیاری از نوشیدنی‌ها با رنگ تیره و آسیاب ریز."
+},
+
+double:{
+cat:"قهوه‌های کلاسیک",
+title:"اسپرسو دوبل",
+desc:"دو شات اسپرسو بسیار قوی برای طرفداران قهوه سنگین و انرژی بالا."
+},
+
+americano:{
+cat:"قهوه‌های کلاسیک",
+title:"امریکانو",
+desc:"ترکیب اسپرسو و آب داغ؛ رقیق‌تر از اسپرسو ولی همچنان تلخ و کلاسیک."
+},
+
+macchiato:{
+cat:"قهوه‌های کلاسیک",
+title:"ماکیاتو",
+desc:"ترکیب اسپرسو با کف شیر؛ طعمی بین کاپوچینو و اسپرسو."
+},
+
+cortado:{
+cat:"قهوه‌های کلاسیک",
+title:"کورتادو",
+desc:"اسپرسو با شیر گرم برای کاهش تلخی و ایجاد تعادل در طعم."
+},
+
+cappuccino:{
+cat:"قهوه‌های کلاسیک",
+title:"کاپوچینو",
+desc:"اسپرسو با شیر داغ و فوم ضخیم؛ یکی از محبوب‌ترین نوشیدنی‌ها."
+},
+
+flatwhite:{
+cat:"قهوه‌های کلاسیک",
+title:"فلت وایت",
+desc:"اسپرسو با شیر بخار داده شده بدون کف زیاد؛ نرم و کرمی."
+},
+
+latte:{
+cat:"قهوه‌های کلاسیک",
+title:"لاته",
+desc:"شیر زیاد + اسپرسو؛ طعم ملایم و مناسب علاقه‌مندان نوشیدنی سبک."
+},
+
+mocha:{
+cat:"قهوه‌های کلاسیک",
+title:"موکا",
+desc:"ترکیب شکلات، شیر و اسپرسو با طعم شیرین و جذاب."
+},
+
+blacktea:{
+cat:"چای و دمنوش",
+title:"چای سیاه",
+desc:"چای کلاسیک ایرانی با طعم تلخ و اصیل."
+},
+
+matcha:{
+cat:"چای و دمنوش",
+title:"چای ماچا",
+desc:"چای سبز پودری با خاصیت چربی‌سوزی و طعم خاص."
+},
+
+whiteTea:{
+cat:"چای و دمنوش",
+title:"چای سفید",
+desc:"چای سبک و کم‌فرآوری‌شده با طعم ملایم."
+},
+
+oolong:{
+cat:"چای و دمنوش",
+title:"چای اولانگ",
+desc:"چای نیمه‌تخمیر شده با طعم بین چای سبز و سیاه."
+},
+
+masala:{
+cat:"چای و دمنوش",
+title:"چای ماسالا",
+desc:"چای ادویه‌ای با دارچین، زنجبیل، هل و شیر."
+},
+
+herbal:{
+cat:"چای و دمنوش",
+title:"دمنوش گیاهی",
+desc:"ترکیب گیاهان مثل به‌لیمو، زنجبیل و گیاهان آرامش‌بخش."
+},
+
+coldcoffee:{
+cat:"نوشیدنی‌های سرد",
+title:"کلد کافی",
+desc:"قهوه سرد با یخ، مناسب روزهای گرم."
+},
+
+frappe:{
+cat:"نوشیدنی‌های سرد",
+title:"فراپه",
+desc:"اسپرسو، شیر و یخ مخلوط‌شده در بلندر."
+},
+
+icedlatte:{
+cat:"نوشیدنی‌های سرد",
+title:"آیس لاته",
+desc:"لاته سرد با یخ و شیر زیاد؛ سبک و خنک."
+},
+
+affogato:{
+cat:"نوشیدنی‌های سرد",
+title:"آفوگاتو",
+desc:"اسپرسو داغ روی بستنی وانیلی؛ ترکیب دسر و قهوه."
+},
+
+smoothie:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"اسموتی",
+desc:"ترکیب میوه، شیر و یخ خرد شده با طعم‌های متنوع."
+},
+
+milkshake:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"میلک شیک",
+desc:"بستنی + شیر + طعم‌دهنده؛ محبوب تابستانی."
+},
+
+glass:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"گلاسه",
+desc:"نوشیدنی لایه‌ای از شیر، بستنی و میوه."
+},
+
+mojito:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"موهیتو",
+desc:"لیموناد گازدار با نعناع و یخ."
+},
+
+detox:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"دتاکس واتر",
+desc:"آب ترکیب شده با میوه و سبزیجات برای سم‌زدایی."
+},
+
+punch:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"پانچ",
+desc:"ترکیب میوه‌ها و آب گازدار با طعم شیرین."
+},
+
+icetea:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"آیس تی",
+desc:"چای سرد با نعناع و میوه."
+},
+
+cocktail:{
+cat:"نوشیدنی‌های میوه‌ای",
+title:"کوکتل میوه‌ای",
+desc:"ترکیب چند میوه تازه با یخ و طعم‌دهنده."
+},
+
+alfredo:{
+cat:"غذاهای فرنگی",
+title:"پاستا آلفردو",
+desc:"پاستا با مرغ، قارچ، خامه و سس مخصوص."
+},
+
+panini:{
+cat:"غذاهای فرنگی",
+title:"پنینی",
+desc:"ساندویچ ایتالیایی با نان تست و مواد مختلف."
+},
+
+stroganoff:{
+cat:"غذاهای فرنگی",
+title:"چیکن استروگانوف",
+desc:"مرغ و قارچ با سس سفید و خامه‌ای."
+},
+
+crepe:{
+cat:"غذاهای فرنگی",
+title:"کرپ",
+desc:"غذای نازک با مواد شیرین یا گوشتی."
+}
+
+};
+
+/* BUILD MENU */
+const menu = document.getElementById("menu");
+
+let lastCat="";
+
+for(let key in data){
+
+if(data[key].cat !== lastCat){
+  let cat = document.createElement("div");
+  cat.className="cat-title";
+  cat.innerText=data[key].cat;
+  menu.appendChild(cat);
+  lastCat=data[key].cat;
+}
+
+let div = document.createElement("div");
+div.className="card";
+div.innerText=data[key].title;
+div.onclick=()=>openItem(key);
+menu.appendChild(div);
+
+}
+
+function openItem(key){
+document.getElementById("menu").style.display="none";
+document.getElementById("detailBox").style.display="block";
+document.getElementById("title").innerText=data[key].title;
+document.getElementById("desc").innerText=data[key].desc;
+}
+
+function goBack(){
+document.getElementById("menu").style.display="block";
+document.getElementById("detailBox").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
